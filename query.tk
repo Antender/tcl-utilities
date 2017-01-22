@@ -1,0 +1,29 @@
+package require http
+
+proc sendtext {} {
+global urltext
+       set querytoken [::http::geturl $urltext]
+       .content delete 0.0 end
+       .content insert 0.0 [::http::data $querytoken]
+       ::http::cleanup $querytoken  
+}
+
+entry .eUrl -textvariable urltext
+button .send -text send -command sendtext
+radiobutton .get -variable querytype -value GET -text GET
+radiobutton .post -variable querytype -value POST -text POST
+text .content -yscrollcommand {.tscroll set}
+scrollbar .tscroll -command {.content yview}
+label .status
+
+grid .eUrl - - .send  - -sticky nswe
+grid .get  - .post - - -sticky nswe
+grid .content - - - .tscroll -sticky nswe
+grid .status - - - -
+grid columnconfigure . "all" -uniform allTheSame
+
+set querytype GET
+tkwait variable exit
+
+.t conf -yscrollcommand {.sby set}
+ .sby conf -command {.t yview}

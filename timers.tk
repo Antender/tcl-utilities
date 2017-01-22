@@ -1,0 +1,21 @@
+set default_time 5400
+set command {}
+
+wm attributes . -topmost true 
+wm resizable . 0 0
+grab set -global .
+grid [button .restart -text R -font {-size 7 -weight bold} -command restart -relief flat -padx 0] [label .time -textvariable ::current_time -fg {dark green} -font {-size 14 -weight bold}]
+proc refresh {} {
+         
+	set ::current_time [clock format $::time -timezone :UTC -format {%T}]
+        incr ::time -1
+        if {$::time==0} {
+           restart
+           exec {*}$command
+        }
+	after 1000 refresh
+}
+proc restart {} {set ::time $::default_time}
+restart
+refresh
+tkwait window .

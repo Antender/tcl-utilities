@@ -1,0 +1,31 @@
+package require http
+package require Tk
+proc getPage { url } {
+       set token [::http::geturl $url]
+       set data [::http::data $token]
+       ::http::cleanup $token          
+       return $data
+}
+proc getFiles {prefix} {
+foreach filename [glob -nocomplain {downloads/*}] {
+file delete $filename
+}
+set id 0
+foreach url [lrange [split [.filenames get 0.0 end] \n] 0 end-1] {
+set fid [open "downloads/[file tail $url]" w]
+fconfigure $fid -translation {binary binary}
+puts $fid [getPage "${prefix}${url}"]
+close $fid
+incr id
+}
+}
+entry .prefix  -textvariable prefix
+label .site -text {Site:}
+text .filenames
+button .get -text {Get'em!} -command {getFiles $prefix }
+grid .site .prefix -sticky nswe
+grid .filenames -
+grid .get - -sticky nswe
+grid columnconfigure . 0 -weight 1
+grid columnconfigure . 1 -weight 6
+tkwait window .

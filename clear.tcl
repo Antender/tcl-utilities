@@ -1,0 +1,1 @@
+file delete {*}[glob [pwd]/*/index.html]

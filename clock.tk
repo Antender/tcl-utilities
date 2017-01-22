@@ -1,0 +1,11 @@
+wm attributes . -topmost true -toolwindow true
+wm resizable . 0 0
+grid [button .refresh -text R -font {-size 7 -weight bold} -command refresh_date -relief flat -padx 0] [label .time -textvariable current_time -fg {dark green} -font {-size 14 -weight bold}]
+proc refresh {} { 
+	set ::current_time [clock format [clock seconds] -format {%H:%M:%S}]
+	after 999 refresh
+}
+proc refresh_date {} {wm title . [clock format [clock seconds] -format {%D}]}
+refresh
+refresh_date
+tkwait window .
